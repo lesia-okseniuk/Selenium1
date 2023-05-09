@@ -7,6 +7,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -49,7 +52,7 @@ public class SearchTest {
 
     @AfterClass
     public void afterClass() {
-        driver.quit();
+        //driver.quit();
     }
 
     @Test
@@ -130,8 +133,8 @@ public class SearchTest {
     public void openBerkut () {
         assertThat(driver).isNotNull();
 
-        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(30));
 
         driver.navigate().to("http://berkut.mk.ua/test2022/");
         //driver.get("http://berkut.mk.ua/logictest/"); // Тест на логіку
@@ -196,8 +199,8 @@ public class SearchTest {
     public void practiseWithGoogle() {
         assertThat(driver).isNotNull();
 
-        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(30));
 
         driver.navigate().to("https://www.google.com/");
 
@@ -233,6 +236,31 @@ public class SearchTest {
                 .contains("Google");
 
         driver.close();
+    }
+
+    @Test
+    @SneakyThrows
+    public void practiseWithExplicitWaits() {
+        assertThat(driver).isNotNull();
+        driver.navigate().to("https://www.google.com/");
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("lnXdpd")));
+
+        WebElement queryString = driver.findElement(By.name("q"));
+        queryString.clear();
+        queryString.sendKeys("Selenium");
+        WebElement searchButton = driver.findElement(By.name("btnK"));
+        wait.until(ExpectedConditions.elementToBeClickable(searchButton));
+
+        searchButton.click();
+
+        wait.until(ExpectedConditions.titleContains("Selenium"));
+
+
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("lnXdpd")));
+
+        driver.quit();
     }
 
 }
